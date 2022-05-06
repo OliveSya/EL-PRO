@@ -1,0 +1,106 @@
+@startuml
+
+skinparam monochrome true
+
+package "EL_PRO" <<rectangle>> {
+  package "User" <<rectangle>> {
+    ' テーブル
+    entity "userinfo" {
+      + user_id [PK] : integer
+      ==
+      lastname : character varying
+      firstname : character varying
+      birthday : character varying
+      sex : character varying
+      company : character varying
+      city : character varying
+      create_datetime : timestamp whitout time zone
+      update_datetime : timestamp whitout time zone
+    }
+    entity "login" {
+      + user_id [PK] : integer
+      ==
+      mail : character varying
+      password : character varying
+      create_datetime : timestamp whitout time zone
+      update_datetime : timestamp whitout time zone
+    }
+    entity "login_event" {
+      + user_id [PK] : integer
+      + login_datetime [PK] : timestamp whitout time zone
+      ==
+      logout_datetime : timestamp whitout time zone
+    }
+    ' リレーション
+    userinfo ||--|| login
+    login --|{ login_event
+  }
+
+  package "test" <<rectangle>>{
+    ' テーブル
+    entity "exam_event"{
+      + exam_event_id [PK] : integer
+      ==
+      user_id [FK] : integer
+      test_id [FK] : integer
+      test_result : integer
+      create_datetime : timestamp whitout time zone
+      update_datetime : timestamp whitout time zone
+    }
+
+    entity "user_test_answer"{
+      + exam_event_id [PK] : integer
+      + question_id [PK] : integer
+      ==
+      user_answer_right_or_wrong : boolean
+      user_answer_option : character varying
+      create_datetime : timestamp whitout time zone
+      update_datetime : timestamp whitout time zone
+    }
+
+    ' リレーション
+    exam_event --|{ user_test_answer
+  }
+
+  package "product" <<rectangle>>{
+    ' テーブル
+    entity "exam"{
+      + test_id [PK] : integer
+      ==
+      test_category : character varying
+      test_name : character varying
+      description : character varying
+      create_datetime : timestamp whitout time zone
+      update_datetime : timestamp whitout time zone
+    }
+    entity "question"{
+      + question_id [PK] : integer
+      + test_id [PK] : integer
+      ==
+      text : character varying
+      code : character varying
+      right_select_count : integer
+      create_datetime : timestamp whitout time zone
+      update_datetime : timestamp whitout time zone
+    }
+    entity "option"{
+      + option_id [PK] : integer
+      + question_id [PK] : integer
+      + test_id [PK] : integer
+      ==
+      text : character varying
+      right_or_wrong : boolean
+      create_datetime : timestamp whitout time zone
+      update_datetime : timestamp whitout time zone
+    }
+    ' リレーション
+    exam --|{question
+    question --|{option
+  }
+
+  ' リレーション
+  userinfo --|{ exam_event
+  exam --|{ exam_event
+
+}
+@enduml
